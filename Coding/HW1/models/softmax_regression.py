@@ -72,7 +72,7 @@ class SoftmaxRegression(_baseNetwork):
         y_arr = np.zeros((len(y), self.num_classes)) # 64 x 10
         print("y_arr shape:", y_arr.shape)
         print(X.shape)
-        y_arr[np.arange(len(y)), y] = 1
+        y_arr[np.arange(len(y)), y] = 1 # One hot encoding 
         Z = X.dot(self.weights['W1']) # X -> 64, 784 -- w1 -> 784, 10 -> 64, 10
         print(Z.shape)
         Z_re = self.ReLU(Z)

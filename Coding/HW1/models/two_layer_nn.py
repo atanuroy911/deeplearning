@@ -48,15 +48,24 @@ class TwoLayerNet(_baseNetwork):
         self.weights['b1'] = np.zeros(self.hidden_size)
         self.weights['b2'] = np.zeros(self.num_classes)
         np.random.seed(1024)
-        self.weights['W1'] = 0.001 * np.random.randn(self.input_size, self.hidden_size)
+        self.weights['W1'] = 0.001 * np.random.randn(self.input_size, self.hidden_size) # 784 x 128
+        print('----------------2 Layer Network--------------------')
+        print("weights w1", self.weights['W1'].shape)
         np.random.seed(1024)
-        self.weights['W2'] = 0.001 * np.random.randn(self.hidden_size, self.num_classes)
+        self.weights['W2'] = 0.001 * np.random.randn(self.hidden_size, self.num_classes) # 128 x 10
+        print("weights w2", self.weights['W2'].shape)
+
 
         # initialize gradients to zeros
         self.gradients['W1'] = np.zeros((self.input_size, self.hidden_size))
+        print("gradients w1", self.gradients['W1'].shape)
+
         self.gradients['b1'] = np.zeros(self.hidden_size)
+        print("bias w1", self.gradients['b1'].shape)
         self.gradients['W2'] = np.zeros((self.hidden_size, self.num_classes))
+        print("gradients w2", self.gradients['W2'].shape)
         self.gradients['b2'] = np.zeros(self.num_classes)
+        print("gradients b2", self.gradients['b2'].shape)
 
     def forward(self, X, y, mode='train'):
         """
@@ -85,10 +94,14 @@ class TwoLayerNet(_baseNetwork):
         #    2) Compute Cross-Entropy Loss and batch accuracy based on network      #
         #       outputs                                                             #
         #############################################################################
-        Z1 = X.dot(self.weights["W1"]) + self.weights["b1"]
+        Z1 = X.dot(self.weights["W1"]) + self.weights["b1"] #WTX + b1 # .dot -> torch.matmul
+        print("Z1", Z1.shape)
         O1 = self.sigmoid(Z1)
+        print("O1", O1.shape) 
         Z2 = O1.dot(self.weights["W2"]) + self.weights["b2"]
+        print("Z2", Z2.shape)
         prob = self.softmax(Z2)
+        print("Prob", prob.shape)
         loss = self.cross_entropy_loss(prob, y)
         accuracy = self.compute_accuracy(prob, y)
 
@@ -108,11 +121,12 @@ class TwoLayerNet(_baseNetwork):
         #          the sigmoid function in self.sigmoid_dev first                   #
         #############################################################################
         y_arr = np.zeros((len(y), self.num_classes))
+        print("y_arr", y_arr.shape)
         y_arr[np.arange(len(y)), y] = 1
-        gradient = (prob - y_arr) / len(y)
+        cost = (prob - y_arr) / len(y) # Error Rate
         if mode == 'train':
-            self.gradients["W2"] = O1.T @ gradient
-            self.gradients["b2"] = np.sum(gradient, axis = 0)
+            self.gradients["W2"] = O1.T @ cost
+            self.gradients["b2"] = np.sum(cost, axis = 0)
             self.gradients["W1"] = X.T @ (((prob - y_arr) @ self.weights["W2"].T) * self.sigmoid_dev(Z1)) / y.shape[0]
             self.gradients["b1"] = np.sum((prob - y_arr) @ self.weights["W2"].T * self.sigmoid_dev(Z1) / y.shape[0], axis = 0)
         

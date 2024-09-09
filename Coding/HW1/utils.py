@@ -118,8 +118,8 @@ def generate_batched_data(data, label, batch_size=32, shuffle=False, seed=None):
         batched_data: A list whose elements are batches of images.
         batched_label: A list whose elements are batches of labels
     '''
-    batched_data = None
-    batched_label = None
+    batched_data = []
+    batched_label = []
     if seed:
         random.seed(seed)
     #############################################################################
@@ -144,8 +144,8 @@ def generate_batched_data(data, label, batch_size=32, shuffle=False, seed=None):
             batch_data.append(data[j])
             batch_label.append(label[j])
 
-        batched_data = [np.array(batch_data)]
-        batched_label = [np.array(batch_label)]
+        batched_data.append(np.array(batch_data))
+        batched_label.append(np.array(batch_label))
     #############################################################################
     #                              END OF YOUR CODE                             #
     #############################################################################
